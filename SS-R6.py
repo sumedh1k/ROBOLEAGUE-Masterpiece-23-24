@@ -33,10 +33,11 @@ async def main():
     # write your code here
     motion_sensor.reset_yaw(0)
     motor_pair.pair(motor_pair.PAIR_1,port.D,port.C)
-    await moveMotor(90,985,"left")
-    await moveMotor(-90,985,"left")
-
-
-
-
+    i = 0;
+    while i < 3:
+         await moveMotor(80,880,"left")
+         time.sleep_ms(1000)
+         await moveMotor(-80,880,"left")
+         time.sleep_ms(3000)
+         i += 1
 runloop.run(main())
