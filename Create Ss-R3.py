@@ -16,7 +16,7 @@ async def turnRight(angle):
     while motion_sensor.tilt_angles()[0]>(angle*-10): #getting yaw value from tuple
         motor_pair.move(motor_pair.PAIR_1,100) #move to right
     motor_pair.stop(motor_pair.PAIR_1) #stop the motors after that while loop
-    motion_sensor.reset_yaw(0) #reset yaw value                 
+    motion_sensor.reset_yaw(0) #reset yaw value
 
 0
 async def whiteout(speed, port):
@@ -30,30 +30,47 @@ async def moveMotor(degrees,speed, side):
     if (side == "right"):
         motor.run_for_degrees(port.A, degrees, speed, stop = motor.HOLD)
 
-
 async def main():
+    # write your code here
     motion_sensor.reset_yaw(0)
     motor_pair.pair(motor_pair.PAIR_1,port.D,port.C)
-    await drive(20,800)
+    default = 800
+    await moveMotor(-100,500,"right")
+    await drive(20,default)
     await turnRight(45)
-    await drive(35,700)
-    await turnRight(45)
-    await drive(42,800)
-    await moveMotor(90,1050,"right")
-    time.sleep_ms(700)
-    await drive(-10,400)
-    await moveMotor(-90,1050,"right")
-    await drive(-3,800)
+    await drive(38,default)
+    await turnLeft(135)
+    await drive(-35,default)
+    await drive(20,default)
+    await turnLeft(135)
+    await drive(30,default)
+    await turnLeft(50)
+    await drive(5,default)
+    await moveMotor(200,900,"right")
+    time.sleep_ms(1000)
+    await drive(-60,default)
+    await moveMotor(-300,500,"right")
     await turnLeft(45)
-    await drive(45,400)
+    await drive(-20,default)
+    # await drive(-55,default) plans on doing coaster
+    # await turnLeft(45)
+    # await moveMotor(-180,150,"right")
+    # time.sleep_ms(1500)
+    # await drive(4,default)
+    # time.sleep_ms(500)
+    # await moveMotor(190,150,"right")
+    # time.sleep_ms(500)
+    # await drive(4,default)
+    # await turnRight(45)
+    # await drive(50,default)
+    # await turnRight(90)
+    # await drive(10,default)
+    # await drive(25,1050)
+    # await turnLeft(20)
+    # await drive(25,default)
+    # await turnLeft(20)
+    # await drive(10,default)
 
-    await turnLeft(45)
-    await drive(-25,700)
-    await moveMotor(90,1050,"right")
-    time.sleep_ms(2000)
-    await drive(-40,800)
-    await moveMotor(-90,1050,"right")
     
+
 runloop.run(main())
-
-
