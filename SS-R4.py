@@ -1,6 +1,3 @@
-from hub import light_matrix
-import runloop
-
 
 from hub import light_matrix, motion_sensor, port
 import runloop, motor_pair, motor,math,time,runloop, color, color_sensor
@@ -11,41 +8,58 @@ async def drive(distance, speed):
 
 async def turnLeft(angle):
     while motion_sensor.tilt_angles()[0]<(angle*10): #while the angle sensor is less than desired angle
-        motor_pair.move(motor_pair.PAIR_1,-100) #both motors will run -100 degrees
+        motor_pair.move(motor_pair.PAIR_1,-100, acceleration=600, velocity=350) #both motors will run -100 degrees
     motor_pair.stop(motor_pair.PAIR_1) #stop the motors after that while loop
     motion_sensor.reset_yaw(0) #reset yaw value
 
 async def turnRight(angle):
     while motion_sensor.tilt_angles()[0]>(angle*-10): #getting yaw value from tuple
-        motor_pair.move(motor_pair.PAIR_1,100) #move to right
+        motor_pair.move(motor_pair.PAIR_1,100,acceleration=600, velocity=350) #move to right
     motor_pair.stop(motor_pair.PAIR_1) #stop the motors after that while loop
     motion_sensor.reset_yaw(0) #reset yaw value
+
 
 async def whiteout(speed, port):
     while(color_sensor.color(port) == 10):
             motor_pair.move(motor_pair.PAIR_1, 0, velocity = speed) #drive robot until white is not sensed
     motor_pair.stop(motor_pair.PAIR_1)
 
+async def moveMotor(degrees,speed, side):
+    if (side == "left"):
+        motor.run_for_degrees(port.B, degrees, speed, stop = motor.HOLD)
+    if (side == "right"):
+        motor.run_for_degrees(port.A, degrees, speed, stop = motor.HOLD)
+
+
 async def main():
     motor_pair.pair(motor_pair.PAIR_1,port.D,port.C)
         # code before drop off
-      # go foward (5 cm)
+    # go foward (5 cm)
         # turn right (30 degrees)
     await turnRight(30)
-      # go foward (25 cm)
-    await drive(55,650)
-      # turn left (120 degrees)
+    # go foward (25 cm)
+    await drive(50,650)
+    # turn left (120 degrees)
     await turnLeft(120)
-    await drive(30,800)
+    await drive(31,800)
 
     motion_sensor.reset_yaw(0)
-    motor.run_for_degrees(port.B, -50, 200)
-    time.sleep_ms(1000)
-    motor.run_for_degrees(port.B, 50, 200)
-    time.sleep_ms(100)
-
-     #code after drop off
-    await drive(-10, 1000)
+    motor.run_for_degrees(port.A, 50, 200)
+    time.sleep_ms(800)
+    motor.run_for_degrees(port.A,-50, 200)
+    time.sleep_ms(300)
+    #code after drop off
+    await drive(-10,1000)
     await turnRight(90)
-    await drive(-70, 1000)
+    await drive(26,2000)
+    await moveMotor(100, 800, "left")
+    time.sleep_ms(500)
+    await drive(47, 1000)
+    await moveMotor(-100, 800, "left")
+    await drive(95, 1000)
+    #code after drop off
+    # await drive(-10, 1000)
+    #code for coming back home
+    # await turnRight(90)
+    # await drive(-70, 1000)
 runloop.run(main())
