@@ -7,15 +7,15 @@ async def drive(distance, speed):
 
 async def turnLeft(angle):
     while motion_sensor.tilt_angles()[0]<(angle*10): #while the angle sensor is less than desired angle
-        motor_pair.move(motor_pair.PAIR_1,-100) #both motors will run -100 degrees
+        motor_pair.move(motor_pair.PAIR_1,-100, acceleration=600, velocity=350) #both motors will run -100 degrees
+    motor_pair.stop(motor_pair.PAIR_1) #stop the motors after that while loop
+    motion_sensor.reset_yaw(0) #reset yaw value
+async def turnRight(angle):
+    while motion_sensor.tilt_angles()[0]>(angle*-10): #getting yaw value from tuple
+        motor_pair.move(motor_pair.PAIR_1,100,acceleration=600, velocity=350) #move to right
     motor_pair.stop(motor_pair.PAIR_1) #stop the motors after that while loop
     motion_sensor.reset_yaw(0) #reset yaw value
 
-async def turnRight(angle):
-    while motion_sensor.tilt_angles()[0]>(angle*-10): #getting yaw value from tuple
-        motor_pair.move(motor_pair.PAIR_1,100) #move to right
-    motor_pair.stop(motor_pair.PAIR_1) #stop the motors after that while loop
-    motion_sensor.reset_yaw(0) #reset yaw value
 
 async def whiteout(speed, port):
     while(color_sensor.color(port) == 10):
@@ -30,27 +30,36 @@ async def moveMotor(degrees,speed, side):
 
 
 async def main():
-    # write your code here
     motion_sensor.reset_yaw(0)
     motor_pair.pair(motor_pair.PAIR_1,port.D,port.C)
     default = 800
     await drive(30,default)
     await turnRight(90)
-    await drive(60,default)
-    await turnRight(43)
+    await drive(55,default)
+    await turnRight(42)
+    await drive(38,default)
+    time.sleep_ms(500)
+    await moveMotor(2500,1050,"left")
+    time.sleep_ms(3000)
+    await drive(-45, 1050)
+    await turnLeft(135)
+    await drive(-20,1050)
+    await drive(7,1050)
+    await drive(-9,1050)
+    await drive(57,1050)
+    await moveMotor(45,1050,"right")
+    time.sleep_ms(300)
+    await drive(-30,1050)
+    await moveMotor(-45,1050,"right")
+    await turnLeft(50)
+    await drive(50,1050)
+    await turnRight(50)
+    await drive(40,1050)
+    await turnRight(90)
     await drive(30,default)
-    time.sleep_ms(1000)
-    await moveMotor(720,1000,"left")
-    time.sleep_ms(1000)
-
-
-    # await drive(-40, default)
-    # await turnLeft(135)
-    # await drive(-5,default)
-    # await drive(7,default)
-    # await drive(-7,default)
-    # await drive(47,default)
-
-
-
-runloop.run(main()) 
+    await moveMotor(4400,2000,"left")
+    time.sleep_ms(4400)
+    await drive(-30,1050)
+    await turnRight(90)
+    await drive(115,1050)
+runloop.run(main())
